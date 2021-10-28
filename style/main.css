@@ -1,0 +1,93 @@
+body {
+    margin: 0;
+    background-color: white;
+
+}
+
+* {
+    box-sizing: border-box;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    background-color: orangered;
+    padding: 5px;
+    margin-bottom: 20px;
+}
+
+.logo {
+    width: 152px;
+}
+
+.image-gallery {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.images-container {
+    margin-top: 10px;
+    width: 90%;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.search-bar {
+    width: 80%;
+}
+
+.images-container img {
+    /* position: absolute; */
+    width: 200px;
+    border-radius: 10px;
+    top: 10px;
+}
+
+.images-container img:hover {
+    /* border: 0.5px solid black; */
+    box-shadow: 0.5px 0.5px 0.5px 0.5px ;
+}
+
+
+.editor-toolbox button img {
+    width: 15px;
+    height: 15px;
+}
+
+.meme-editor {
+    display: flex;
+    position: fixed;
+    justify-content: space-between;
+    background-color: white;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 100%;
+    transform: translateX(100%);
+    transition: transform .5s;
+    z-index: 5;
+}
+
+.meme-editor.open {
+    transform: translateX(0);
+}
+
+#close-editor {
+    align-self: flex-start;
+}
+
+#line-color-btn {
+    background: image('../images/ICONS/paint-board-and-brush.png');
+}
+
+
+
+
+
+.hidden {
+    display: none;
+}
+

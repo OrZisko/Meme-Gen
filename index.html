@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MemeGen</title>
+    <link rel="stylesheet" href="style/main.css">
+</head>
+
+<body onload="onInit()">
+    <header>
+        <img class="logo" src="images/LOGO/LOGO.png" onclick="printThis(this)" alt="MEMEGEN">
+        <div>
+            <button value="memes">Memes</button>
+            <button value="gallery">Gallery</button>
+            <button value="about">About</button>
+        </div>
+    </header>
+
+    <main class="image-gallery">
+        <input type="text" class="search-bar" placeholder="Search">
+        <section class="images-container">
+        </section>
+    </main>
+
+    <section class="meme-editor">
+        <div class="canvas-container">
+            <canvas class="my-canvas" width="500"></canvas>
+        </div>
+        <section class="editor-toolbox">
+            <div class="text-container">
+                <input type="text" class="meme-text" placeholder="Text Line" onkeypress="onShowMemeText(value, event)">
+            </div>
+            <div class="text-lines-edit">
+                <button onclick="onMoveLine(value)">Down</button>
+                <button onclick="onMoveLine(value)">Up</button>
+                <button onclick="onSwitchLines()"><img src="images/ICONS/switch.png"></button>
+                <button onclick="onAddLine()"><img src="images/ICONS/add.png"></button>
+                <button onclick="onRemoveLine()"><img src="images/ICONS/trash.png"></button>
+            </div>
+            <div class="font-edit">
+                <button onclick="onChangeFontSize(value)" value="+"><img
+                        src="images/ICONS/increase font - icon.png"></button>
+                <button onclick="onChangeFontSize(value)" value="-"><img
+                        src="images/ICONS/decrease font - icon.png"></button>
+                <button onclick="onAlignText('start')"><img src="images/ICONS/align-to-left.png"></button>
+                <button onclick="onAlignText('center')"><img src="images/ICONS/center-text-alignment.png"></button>
+                <button onclick="onAlignText('end')"><img src="images/ICONS/align-to-right.png"></button>
+                <input type="color" value="#000000" id="line-color-btn">
+                <input type="color" value="#000000" id="fill-color-btn">
+            </div>
+
+            <select name="font-select" id="font-select">
+                <option value="Impact">Impact</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Ariel">Ariel</option>
+            </select>
+            <button onclick="onSubmitLine()"></button>
+        </section>
+        <button id="close-editor" onclick="onCloseEditor()">X</button>
+    </section>
+
+
+    <script src="js/services.memegen-service.js"></script>
+    <script src="js/controller.js"></script>
+</body>
+
+</html>
