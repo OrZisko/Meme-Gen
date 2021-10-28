@@ -83,11 +83,8 @@ header {
     background: image('../images/ICONS/paint-board-and-brush.png');
 }
 
-
-
-
-
-.hidden {
-    display: none;
+label input {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
 }
-

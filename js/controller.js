@@ -3,7 +3,8 @@
 var gElCanvas;
 var gCtx;
 var gMarkedLinePos;
-var isLineMarked = false;
+var gIsThereASquare = false;
+var gIsLineMarked = false;
 var gFontSize = 40;
 var gAlign = 'center'
 
@@ -26,6 +27,7 @@ function renderGallery() {
 function onOpenEditMeme(id) {
     makeMemeDeta(id);
     _renderCanvas()
+    addListeners();
     document.querySelector('.meme-editor').classList.add('open');
 }
 
@@ -38,6 +40,7 @@ function renderImageOnCanvas(url) {
 
 function renderLinesOnImg(lines) {
     lines = lines.forEach(line => {
+        gCtx.textAlign = line.align
         gCtx.strokeStyle = line.strokeColor;
         gCtx.fillStyle = line.fillColor;
         gCtx.font = line.font;
@@ -51,8 +54,6 @@ function onCloseEditor() {
     document.querySelector('.meme-editor').classList.remove('open');
 }
 
-function onChangeMemeText(val, ev) {
-}
 
 function onAddLine() {
     var lineExists = getNumOfLines()
@@ -66,25 +67,28 @@ function onAddLine() {
             y = gElCanvas.height - 60
             drawRect(x, y);
             break;
-        case 2:
+        default:
             y = (gElCanvas.height / 2) - 30;
             drawRect(x, y)
     }
     gMarkedLinePos = { x, y: y + gFontSize }
-    isLineMarked = true;
+    gIsThereASquare = true;
 }
 
 function onShowMemeText(val, ev) {
-    if (!isLineMarked) return;
+    var evKey = (!ev) ? '' : ev.key;
+    if (!gIsThereASquare) return;
     _renderCanvas()
     drawRect(gMarkedLinePos.x, gMarkedLinePos.y - gFontSize)
-    const { x, y } = gMarkedLinePos
+    const { y } = gMarkedLinePos;
+    const x = getXPos(gAlign, gElCanvas.width);
+    gCtx.textAlign = gAlign
     gCtx.strokeStyle = document.querySelector('#line-color-btn').value;
     gCtx.fillStyle = document.querySelector('#fill-color-btn').value;
     gCtx.font = `${gFontSize}px ${document.querySelector('#font-select').value}`;
-    console.log(gFontSize + 'px', document.querySelector('#font-select').value);
-    gCtx.fillText((val + ev.key), x, y)
-    gCtx.strokeText((val + ev.key), x, y)
+    gCtx.fillText((val + evKey), x, y)
+    gCtx.strokeText((val + evKey), x, y)
+
 }
 
 function drawRect(x, y) {
@@ -102,14 +106,88 @@ function _renderCanvas() {
 }
 
 function onSubmitLine() {
-    var line = {
+    const { y } = gMarkedLinePos;
+    const x = getXPos(gAlign, gElCanvas.width)
+    const line = {
         txt: document.querySelector('.meme-text').value,
+        size: gFontSize,
         font: `${gFontSize}px ${document.querySelector('#font-select').value}`,
         strokeColor: document.querySelector('#line-color-btn').value,
         fillColor: document.querySelector('#fill-color-btn').value,
-        pos: gMarkedLinePos,
+        align: gAlign,
+        pos: { x, y, }
     }
     document.querySelector('.meme-text').value = ' ';
     creatNewLine(line)
     _renderCanvas()
+    gIsThereASquare = false;
+}
+
+
+function addListeners() {
+    addMouseListeners()
+    addTouchListeners()
+}
+
+function addMouseListeners() {
+    gElCanvas.addEventListener('mousemove', onMove)
+    gElCanvas.addEventListener('mousedown', onDown)
+    gElCanvas.addEventListener('mouseup', onUp)
+}
+
+function addTouchListeners() {
+    gElCanvas.addEventListener('touchmove', onMove)
+    gElCanvas.addEventListener('touchstart', onDown)
+    gElCanvas.addEventListener('touchend', onUp)
+}
+
+function onMove(ev) {
+    const pos = getEvPos(ev)
+    if (gIsLineMarked) {
+        moveLine(pos);
+        _renderCanvas();
+    } else {
+        if (!isLineClicked(pos, gElCanvas.width)) return
+        document.body.style.cursor = 'pointer'
+    }
+}
+
+function onDown(ev) {
+    const pos = getEvPos(ev)
+    if (!isLineClicked(pos, gElCanvas.width)) return;
+    gIsLineMarked = true;
+    setStartPos(pos);
+    document.body.style.cursor = 'grabbing';
+}
+
+function onUp() {
+    gIsLineMarked = false;
+}
+
+function onAlignText(alignment) {
+    gAlign = alignment;
+    const val = document.querySelector('.meme-text').value;
+    onShowMemeText(val)
+}
+
+function onMoveLine(dir) {
+    (dir === 'up') ? moveLineUp() : moveLineDown();
+    _renderCanvas()
+}
+
+function onRemoveLine() {
+    removeLine();
+    _renderCanvas();
+}
+
+function onChangeFontSize(sign) {
+    debugger
+    (sign === '+') ? gFontSize++ : gFontSize--;
+    const val = document.querySelector('.meme-text').value
+    onShowMemeText(val);
+}
+
+function onChangeTextShow() {
+    const val = document.querySelector('.meme-text').value;
+    onShowMemeText(val)
 }
