@@ -88,3 +88,7 @@ label input {
     width: 20px;
     border-radius: 50%;
 }
+
+.clean-list {
+    list-style-type: none;
+}

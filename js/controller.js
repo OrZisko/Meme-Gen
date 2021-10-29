@@ -8,15 +8,13 @@ var gIsLineMarked = false;
 var gFontSize = 40;
 var gAlign = 'center'
 
-
-
 function onInit() {
+    init();
     gElCanvas = document.querySelector('.my-canvas');
-    console.log(gElCanvas);
     gCtx = gElCanvas.getContext('2d');
+    renderKeywords()
     renderGallery();
 }
-
 
 function renderGallery() {
     const gallery = getGalleryForDisplay();
@@ -24,10 +22,17 @@ function renderGallery() {
     document.querySelector('.images-container').innerHTML = displayGallery.join('');
 }
 
+function renderMemes() {
+    const memes = getMemesToGallery();
+    if (!memes.length) alert('There are noe memes to show. Create some')
+    const displayGallery = memes.map(url => `<img src=${url}>`);
+    document.querySelector('.images-container').innerHTML = displayGallery.join('');
+}
+
 function onOpenEditMeme(id) {
     makeMemeDeta(id);
-    _renderCanvas()
-    addListeners();
+    _renderCanvas();
+    _addListeners();
     document.querySelector('.meme-editor').classList.add('open');
 }
 
@@ -43,17 +48,21 @@ function renderLinesOnImg(lines) {
         gCtx.textAlign = line.align
         gCtx.strokeStyle = line.strokeColor;
         gCtx.fillStyle = line.fillColor;
-        gCtx.font = line.font;
+        gCtx.font = `${line.size}px ${line.font}`;
         const { x, y } = line.pos;
         gCtx.fillText(line.txt, x, y)
         gCtx.strokeText(line.txt, x, y)
     });
 }
 
+function renderKeywords() {
+    var keywords = getKeywordsForDisplay().map(keyword => `<li onclick="onFilterGalleryByKeyword(this)" style="font-size:${keyword.count}em;">${keyword.keyword}</li>`)
+    document.querySelector('.keywords-panal').innerHTML = keywords.join('')
+}
+
 function onCloseEditor() {
     document.querySelector('.meme-editor').classList.remove('open');
 }
-
 
 function onAddLine() {
     var lineExists = getNumOfLines()
@@ -98,20 +107,13 @@ function drawRect(x, y) {
     gCtx.stroke();
 }
 
-function _renderCanvas() {
-    const imageUrl = getImageForEditor();
-    const lines = getLinesToRender()
-    renderImageOnCanvas(imageUrl)
-    renderLinesOnImg(lines)
-}
-
 function onSubmitLine() {
     const { y } = gMarkedLinePos;
     const x = getXPos(gAlign, gElCanvas.width)
     const line = {
         txt: document.querySelector('.meme-text').value,
         size: gFontSize,
-        font: `${gFontSize}px ${document.querySelector('#font-select').value}`,
+        font: document.querySelector('#font-select').value,
         strokeColor: document.querySelector('#line-color-btn').value,
         fillColor: document.querySelector('#fill-color-btn').value,
         align: gAlign,
@@ -123,32 +125,17 @@ function onSubmitLine() {
     gIsThereASquare = false;
 }
 
-
-function addListeners() {
-    addMouseListeners()
-    addTouchListeners()
-}
-
-function addMouseListeners() {
-    gElCanvas.addEventListener('mousemove', onMove)
-    gElCanvas.addEventListener('mousedown', onDown)
-    gElCanvas.addEventListener('mouseup', onUp)
-}
-
-function addTouchListeners() {
-    gElCanvas.addEventListener('touchmove', onMove)
-    gElCanvas.addEventListener('touchstart', onDown)
-    gElCanvas.addEventListener('touchend', onUp)
-}
-
 function onMove(ev) {
     const pos = getEvPos(ev)
     if (gIsLineMarked) {
         moveLine(pos);
         _renderCanvas();
     } else {
-        if (!isLineClicked(pos, gElCanvas.width)) return
-        document.body.style.cursor = 'pointer'
+        if (isLineClicked(pos, gElCanvas.width)) document.body.style.cursor = 'pointer';
+        else {
+            document.body.style.cursor = 'default'
+            return;
+        }
     }
 }
 
@@ -156,6 +143,7 @@ function onDown(ev) {
     const pos = getEvPos(ev)
     if (!isLineClicked(pos, gElCanvas.width)) return;
     gIsLineMarked = true;
+    gFontSize = getLineFontSize();
     setStartPos(pos);
     document.body.style.cursor = 'grabbing';
 }
@@ -181,13 +169,89 @@ function onRemoveLine() {
 }
 
 function onChangeFontSize(sign) {
-    debugger
     (sign === '+') ? gFontSize++ : gFontSize--;
-    const val = document.querySelector('.meme-text').value
-    onShowMemeText(val);
+    const val = document.querySelector('.meme-text').value;
+    if (gIsThereASquare) onShowMemeText(val)
+    else {
+        debugger
+        changeFontSize(gFontSize)
+        _renderCanvas()
+    }
 }
 
 function onChangeTextShow() {
     const val = document.querySelector('.meme-text').value;
     onShowMemeText(val)
+}
+
+function onSwitchLines() {
+    switchLines()
+    gFontSize = getLineFontSize()
+    // _renderCanvas()
+}
+
+function onSaveMeme() {
+    uploadImg(gElCanvas);
+}
+
+function _renderCanvas() {
+    const imageUrl = getImageForEditor();
+    const lines = getLinesToRender()
+    renderImageOnCanvas(imageUrl)
+    renderLinesOnImg(lines)
+}
+
+function _addListeners() {
+    _addMouseListeners()
+    _addTouchListeners()
+}
+
+function _addMouseListeners() {
+    gElCanvas.addEventListener('mousemove', onMove)
+    gElCanvas.addEventListener('mousedown', onDown)
+    gElCanvas.addEventListener('mouseup', onUp)
+}
+
+function _addTouchListeners() {
+    gElCanvas.addEventListener('touchmove', onMove)
+    gElCanvas.addEventListener('touchstart', onDown)
+    gElCanvas.addEventListener('touchend', onUp)
+}
+
+function filterGalleryBySearch(val, ev) {
+    if (ev.key === 'Backspace') {
+        renderGallery();
+        return;
+    }
+    var filterBy = val + ev.key;
+    setKeyFilter(filterBy)
+    renderGallery()
+    setImgsToGallery();
+}
+
+function onMoveKeywordsForward() {
+    moveKeywordsForward()
+    renderKeywords()
+}
+
+function onMoveKeywordsBack() {
+    moveKeywordsBack()
+    renderKeywords()
+}
+
+function onFilterGalleryByKeyword(el) {
+    const currKeyWord = el.innerText;
+    setKeyFilter(currKeyWord);
+    renderGallery();
+    setImgsToGallery();
+    increaseKeywordCount(currKeyWord)
+    renderKeywords()
+
+}
+
+function renderShareButton(encodedUrl, url) {
+    document.querySelector('.share-container').innerHTML = `
+    <a class="btn" href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&t=${encodedUrl}" title="Share on Facebook" target="_blank" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=${url}&t=${url}'); return false;">
+       Share   
+    </a>`
 }

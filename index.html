@@ -10,19 +10,27 @@
 </head>
 
 <body onload="onInit()">
+    <p style="font-size:20;">hello</p>
     <header>
         <img class="logo" src="images/LOGO/LOGO.png" onclick="printThis(this)" alt="MEMEGEN">
         <div>
-            <button value="memes">Memes</button>
-            <button value="gallery">Gallery</button>
+            <button onclick="renderMemes()" value="memes">Memes</button>
+            <button onclick="renderGallery()" value="gallery">Gallery</button>
             <button value="about">About</button>
         </div>
     </header>
 
     <main class="image-gallery">
-        <input type="text" class="search-bar" placeholder="Search">
+        <section>
+            <input type="text" class="search-bar" placeholder="Search" onkeydown="filterGallery(value, event)">
+            <div>
+                <button onclick="onMoveKeywordsBack()">b</button>
+                <ul class="keywords-panal clean-list"></ul><button onclick="onMoveKeywordsForward()">f</button>
+            </div>
+        </section>
         <section class="images-container">
         </section>
+        <button>Upload Image</button>
     </main>
 
     <section class="meme-editor">
@@ -45,9 +53,9 @@
                         src="images/ICONS/increase font - icon.png"></button>
                 <button onclick="onChangeFontSize(value)" value="-"><img
                         src="images/ICONS/decrease font - icon.png"></button>
-                <button onclick="onAlignText('start')"><img src="images/ICONS/align-to-left.png"></button>
+                <button onclick="onAlignText('end')"><img src="images/ICONS/align-to-left.png"></button>
                 <button onclick="onAlignText('center')"><img src="images/ICONS/center-text-alignment.png"></button>
-                <button onclick="onAlignText('end')"><img src="images/ICONS/align-to-right.png"></button>
+                <button onclick="onAlignText('start')"><img src="images/ICONS/align-to-right.png"></button>
                 <label for="line-color-btn">Outlint color <input type="color" value="#000000" id="line-color-btn"
                         onchange="onChangeTextShow()"></label>
                 <label for="fill-color-btn">Fill Color <input type="color" value="#000000" id="fill-color-btn"
@@ -59,13 +67,19 @@
                 <option value="Times New Roman">Times New Roman</option>
                 <option value="Ariel">Ariel</option>
             </select>
-            <button onclick="onSubmitLine()"></button>
+            <button onclick="onSubmitLine()">Save Line</button>
+            <section class="loading-btns">
+                <button onclick="onSaveMeme()">Save Meme</button>
+            </section>
         </section>
         <button id="close-editor" onclick="onCloseEditor()">X</button>
+        <div class="share-container"></div>
     </section>
 
 
-    <script src="js/services.memegen-service.js"></script>
+    <script src="js/services/storage-service.js"></script>
+    <script src="js/services/memegen-service.js"></script>
+    <script src="js/services/upload-service.js"></script>
     <script src="js/controller.js"></script>
 </body>
 
