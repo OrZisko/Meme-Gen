@@ -141,6 +141,7 @@ function onMove(ev) {
 
 function onDown(ev) {
     const pos = getEvPos(ev)
+    console.log(pos);
     if (!isLineClicked(pos, gElCanvas.width)) return;
     gIsLineMarked = true;
     gFontSize = getLineFontSize();
