@@ -7,7 +7,14 @@ var gIsThereASquare = false;
 var gIsLineMarked = false;
 var gFontSize = 40;
 var gAlign = 'center'
-
+// TODOS: make line move up and down before saveing meme
+//you can edit a line freely if fucusing on it
+//img saves with square
+//create catagory filter
+//upload
+//CSS
+//to mobile
+//i18n
 function onInit() {
     init();
     gElCanvas = document.querySelector('.my-canvas');
@@ -57,7 +64,7 @@ function renderLinesOnImg(lines) {
 
 function renderKeywords() {
     var keywords = getKeywordsForDisplay().map(keyword => `<li onclick="onFilterGalleryByKeyword(this)" style="font-size:${keyword.count}em;">${keyword.keyword}</li>`)
-    document.querySelector('.keywords-panal').innerHTML = keywords.join('')
+    document.querySelector('.keywords-container').innerHTML = keywords.join('')
 }
 
 function onCloseEditor() {
@@ -102,8 +109,11 @@ function onShowMemeText(val, ev) {
 
 function drawRect(x, y) {
     gCtx.beginPath();
-    gCtx.rect(x, y, gElCanvas.width - 40, gFontSize + 10);
+
     gCtx.strokeStyle = 'black';
+    gCtx.fillStyle = '#00000025'
+    gCtx.rect(x, y, gElCanvas.width - 40, gFontSize + 10);
+    gCtx.fillRect(x, y, gElCanvas.width - 40, gFontSize + 10);
     gCtx.stroke();
 }
 

@@ -10,70 +10,77 @@
 </head>
 
 <body onload="onInit()">
-    <p style="font-size:20;">hello</p>
     <header>
-        <img class="logo" src="images/LOGO/LOGO.png" onclick="printThis(this)" alt="MEMEGEN">
-        <div>
-            <button onclick="renderMemes()" value="memes">Memes</button>
-            <button onclick="renderGallery()" value="gallery">Gallery</button>
-            <button value="about">About</button>
+        <div class="main-layout header-layout">
+            <img class="logo" src="images/LOGO/LOGO.png" onclick="printThis(this)" alt="MEMEGEN">
+            <div>
+                <button onclick="renderMemes()" value="memes">Memes</button>
+                <button onclick="renderGallery()" value="gallery">Gallery</button>
+                <button value="about">About</button>
+            </div>
         </div>
     </header>
 
     <main class="image-gallery">
-        <section>
-            <input type="text" class="search-bar" placeholder="Search" onkeydown="filterGallery(value, event)">
-            <div>
-                <button onclick="onMoveKeywordsBack()">b</button>
-                <ul class="keywords-panal clean-list"></ul><button onclick="onMoveKeywordsForward()">f</button>
+        <section class="search-panel main-layout">
+            <div class="keywords-section">
+                <button onclick="onMoveKeywordsBack()"><img src="images/arrow-left.png"></button>
+                <ul class="keywords-container clean-list"></ul>
+                <button onclick="onMoveKeywordsForward()"><img src="images/arrow-right.png"></button>
             </div>
+            <input type="text" class="search-bar" placeholder="Search" onkeydown="filterGalleryBySearch(value, event)">
         </section>
-        <section class="images-container">
+        <section class="images-container main-layout">
         </section>
-        <button>Upload Image</button>
     </main>
 
     <section class="meme-editor">
-        <div class="canvas-container">
-            <canvas class="my-canvas" width="500"></canvas>
-        </div>
-        <section class="editor-toolbox">
-            <div class="text-container">
-                <input type="text" class="meme-text" placeholder="Text Line" onkeypress="onShowMemeText(value, event)">
-            </div>
-            <div class="text-lines-edit">
-                <button onclick="onMoveLine(value)" value="down">Down</button>
-                <button onclick="onMoveLine(value)" value="up">Up</button>
-                <button onclick="onSwitchLines()"><img src="images/ICONS/switch.png"></button>
-                <button onclick="onAddLine()"><img src="images/ICONS/add.png"></button>
-                <button onclick="onRemoveLine()"><img src="images/ICONS/trash.png"></button>
-            </div>
-            <div class="font-edit">
-                <button onclick="onChangeFontSize(value)" value="+"><img
-                        src="images/ICONS/increase font - icon.png"></button>
-                <button onclick="onChangeFontSize(value)" value="-"><img
-                        src="images/ICONS/decrease font - icon.png"></button>
-                <button onclick="onAlignText('end')"><img src="images/ICONS/align-to-left.png"></button>
-                <button onclick="onAlignText('center')"><img src="images/ICONS/center-text-alignment.png"></button>
-                <button onclick="onAlignText('start')"><img src="images/ICONS/align-to-right.png"></button>
-                <label for="line-color-btn">Outlint color <input type="color" value="#000000" id="line-color-btn"
-                        onchange="onChangeTextShow()"></label>
-                <label for="fill-color-btn">Fill Color <input type="color" value="#000000" id="fill-color-btn"
-                        onchange="onChangeTextShow()"></label>
+        <div class="editor-layout main-layout">
+            <button id="close-editor" onclick="onCloseEditor()">X</button>
+            <div class="canvas-container">
+                <canvas class="my-canvas" width="500"></canvas>
             </div>
 
-            <select name="font-select" id="font-select">
-                <option value="Impact">Impact</option>
-                <option value="Times New Roman">Times New Roman</option>
-                <option value="Ariel">Ariel</option>
-            </select>
-            <button onclick="onSubmitLine()">Save Line</button>
-            <section class="loading-btns">
-                <button onclick="onSaveMeme()">Save Meme</button>
+            <section class="editor-toolbox">
+                <div class="text-container">
+                    <input type="text" class="meme-text" placeholder="Text Line"
+                        onkeypress="onShowMemeText(value, event)">
+                </div>
+                <div class="text-lines-edit">
+                    <button onclick="onMoveLine(value)" value="down"><img src="images/arrow-down.png" alt=""></button>
+                    <button onclick="onMoveLine(value)" value="up"><img src="images/arrow-up.png" alt=""></button>
+                    <button onclick="onSwitchLines()"><img src="images/ICONS/switch.png"></button>
+                    <button onclick="onAddLine()"><img src="images/ICONS/add.png"></button>
+                    <button onclick="onRemoveLine()"><img src="images/ICONS/trash.png"></button>
+                </div>
+                <div class="font-edit">
+                    <button onclick="onChangeFontSize(value)" value="+"><img
+                            src="images/ICONS/increase font - icon.png"></button>
+                    <button onclick="onChangeFontSize(value)" value="-"><img
+                            src="images/ICONS/decrease font - icon.png"></button>
+                    <button onclick="onAlignText('end')"><img src="images/ICONS/align-to-left.png"></button>
+                    <button onclick="onAlignText('center')"><img src="images/ICONS/center-text-alignment.png"></button>
+                    <button onclick="onAlignText('start')"><img src="images/ICONS/align-to-right.png"></button>
+                </div>
+                <div class="color-section">
+                    <label for="line-color-btn" class="line-color"><img src="images/ICONS/text stroke.png"> <input
+                            type="color" value="#ffffff" id="line-color-btn" onchange="onChangeTextShow()"></label>
+                    <label for="fill-color-btn" class="fill-color"><img src="images/ICONS/paint-board-and-brush.png">
+                        <input type="color" value="#000000" id="fill-color-btn" onchange="onChangeTextShow()"></label>
+                </div>
+
+                <select name="font-select" id="font-select">
+                    <option value="Impact">Impact</option>
+                    <option value="Times New Roman">Times New Roman</option>
+                    <option value="Ariel">Ariel</option>
+                </select>
+                <button onclick="onSubmitLine()">Save Line</button>
+                <section class="loading-btns">
+                    <button onclick="onSaveMeme()">Save Meme</button>
+                </section>
             </section>
-        </section>
-        <button id="close-editor" onclick="onCloseEditor()">X</button>
-        <div class="share-container"></div>
+            <div class="share-container"></div>
+        </div>
     </section>
 
 
