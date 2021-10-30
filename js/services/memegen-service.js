@@ -68,7 +68,6 @@ function getEvPos(ev) {
         y: ev.offsetY,
     }
     if (G_TOUCH_EV.includes(ev.type)) {
-        debugger
         ev.preventDefault();
         ev = ev.changedTouches[0];
         pos = {

@@ -59,6 +59,7 @@ header {
     width: 200px;
     border-radius: 10px;
     top: 10px;
+    margin: auto;
 }
 
 .images-container img:hover {
@@ -81,7 +82,7 @@ button img, label img {
     right: 0;
     height: 100vh;
     width: 100%;
-    transform: translateX(100%);
+    transform: translateX(200%);
     transition: transform .5s;
     z-index: 5;
     padding-top: 20px;
@@ -162,14 +163,19 @@ label input {
     }
 }
 
+
 @media (max-width: 860px) {
     body {
         font-size: 14px;
     }
 
+    header {
+        min-width: 250px;
+    }
+
     .main-layout {
         max-width: 500px;
-        min-width: 200px;
+        /* min-width: 200px; */
     }
 
     .meme-editor {
@@ -184,5 +190,16 @@ label input {
     }
 
     .keywords-section {
+        margin: auto;
     }
+
+    .images-container img {
+        /* width: 150px; */
+    }
+
+    /* .images-container {
+        display: flex;
+        flex-direction: column wrap;
+    } */
+
 }
