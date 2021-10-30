@@ -14,9 +14,10 @@
         <div class="main-layout header-layout">
             <img class="logo" src="images/LOGO/LOGO.png" onclick="printThis(this)" alt="MEMEGEN">
             <div>
+                <button value="movies" onclick="onFilterGallery(value)">Movies</button>
+                <button value="animals" onclick="onFilterGallery(value)">Animals</button>
                 <button onclick="renderMemes()" value="memes">Memes</button>
                 <button onclick="renderGallery()" value="gallery">Gallery</button>
-                <button value="about">About</button>
             </div>
         </div>
     </header>
@@ -64,9 +65,10 @@
                 </div>
                 <div class="color-section">
                     <label for="line-color-btn" class="line-color"><img src="images/ICONS/text stroke.png"> <input
-                            type="color" value="#ffffff" id="line-color-btn" onchange="onChangeTextShow()"></label>
+                            type="color" value="#ffffff" id="line-color-btn" onchange="onChangeTextShow(this)"></label>
                     <label for="fill-color-btn" class="fill-color"><img src="images/ICONS/paint-board-and-brush.png">
-                        <input type="color" value="#000000" id="fill-color-btn" onchange="onChangeTextShow()"></label>
+                        <input type="color" value="#000000" id="fill-color-btn"
+                            onchange="onChangeTextShow(this)"></label>
                 </div>
 
                 <select name="font-select" id="font-select">
@@ -77,13 +79,14 @@
                 <button onclick="onSubmitLine()">Save Line</button>
                 <section class="loading-btns">
                     <button onclick="onSaveMeme()">Save Meme</button>
+                    <div class="share-container"></div>
                 </section>
             </section>
-            <div class="share-container"></div>
         </div>
     </section>
 
 
+    <script src="js/services/utilities-service.js"></script>
     <script src="js/services/storage-service.js"></script>
     <script src="js/services/memegen-service.js"></script>
     <script src="js/services/upload-service.js"></script>

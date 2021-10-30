@@ -62,22 +62,6 @@ function getXPos(align, width) {
     }
 }
 
-function getEvPos(ev) {
-    var pos = {
-        x: ev.offsetX,
-        y: ev.offsetY,
-    }
-    if (G_TOUCH_EV.includes(ev.type)) {
-        ev.preventDefault();
-        ev = ev.changedTouches[0];
-        pos = {
-            x: ev.pageX - ev.target.offsetLeft - ev.target.clientLeft,
-            y: ev.pageY - ev.target.offsetTop - ev.target.clientTop,
-        }
-    }
-    return pos
-}
-
 function isLineClicked(clickPos, width) {
     const lineIdx = gMeme.lines.findIndex(line =>
         clickPos.y > line.pos.y - line.size &&
@@ -108,10 +92,12 @@ function changeFontSize(size) {
 }
 
 function moveLineUp() {
+    if (!gMeme.selectedLineIdx) return
     gMeme.lines[gMeme.selectedLineIdx].pos.y -= 10;
 }
 
 function moveLineDown() {
+    if (!gMeme.selectedLineIdx) return
     gMeme.lines[gMeme.selectedLineIdx].pos.y += 10;
 }
 
@@ -202,6 +188,15 @@ function moveKeywordsBack() {
 
 function increaseKeywordCount(keywordToIncrease) {
     var currKeyword = gKeywords.find(keyword => keyword.keyword === keywordToIncrease)
-    if (currKeyword.count > 5) return;
-    currKeyword.count++
+    if (currKeyword.count > 3) return;
+    currKeyword.count += 0.5
+    gKeywordsIdx = 0;
+}
+
+function changeFillColor(val) {
+    gMeme.lines[gMeme.selectedLineIdx].fillColor = val;
+}
+
+function changeStrokeColor(val) {
+    gMeme.lines[gMeme.selectedLineIdx].strokeColor = val;
 }

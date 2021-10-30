@@ -55,7 +55,6 @@ header {
 }
 
 .images-container img {
-    /* position: absolute; */
     width: 200px;
     border-radius: 10px;
     top: 10px;
@@ -63,10 +62,8 @@ header {
 }
 
 .images-container img:hover {
-    /* border: 0.5px solid black; */
     box-shadow: 0.5px 0.5px 0.5px 0.5px ;
 }
-
 
 button img, label img {
     width: 15px;
@@ -95,10 +92,6 @@ button img, label img {
     justify-content: space-between;
 }
 
-@media (max-width: 860px) {
- 
-}
-
 .meme-editor.open {
     transform: translateX(0);
 }
@@ -125,9 +118,9 @@ label input {
 
 .keywords-section {
     display: flex;
-    width: 70%;
+    width: 80%;
     justify-content: space-between;
-    margin-left: 5px
+    /* margin-left: 5px */
 }
 
 
@@ -136,6 +129,8 @@ label input {
     height: 5rem;
     color: orangered;
 }
+
+
 
 .keywords-container {
     display: flex;
@@ -157,6 +152,25 @@ label input {
     margin: 5px auto;
 }
 
+.loading-btns {
+    display: flex;
+    flex-direction: column;
+}
+
+.share-container {
+    margin-top: 5px;
+}
+
+.share-container a {
+    height: 1.5rem;
+    width: 20px;
+    text-decoration: none;
+    border: 1px solid black;
+    border-radius: 2px;
+    color: black;
+    margin: 5px;
+}
+
 @media (max-width: 1060px) {
     .main-layout {
         max-width: 700px;
@@ -173,13 +187,23 @@ label input {
         min-width: 250px;
     }
 
+    .my-canvas {
+        width: 250px
+    }
+
     .main-layout {
         max-width: 500px;
-        /* min-width: 200px; */
+        min-width: 200px;
     }
 
     .meme-editor {
         border-bottom: 20px solid orangered;
+        height: 100%;
+    }
+
+    .search-panel {
+        align-items: stretch;
+    
     }
 
     .editor-layout {
@@ -190,16 +214,10 @@ label input {
     }
 
     .keywords-section {
-        margin: auto;
+        margin-left: 0;
     }
 
     .images-container img {
-        /* width: 150px; */
+        width: 80%;
     }
-
-    /* .images-container {
-        display: flex;
-        flex-direction: column wrap;
-    } */
-
 }

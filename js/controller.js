@@ -7,14 +7,8 @@ var gIsThereASquare = false;
 var gIsLineMarked = false;
 var gFontSize = 40;
 var gAlign = 'center'
-// TODOS: make line move up and down before saveing meme
-//you can edit a line freely if fucusing on it
-//img saves with square
-//create catagory filter
-//upload
-//CSS
-//to mobile
-//i18n
+
+
 function onInit() {
     init();
     gElCanvas = document.querySelector('.my-canvas');
@@ -43,6 +37,10 @@ function onOpenEditMeme(id) {
     document.querySelector('.meme-editor').classList.add('open');
 }
 
+function onCloseEditor() {
+    document.querySelector('.meme-editor').classList.remove('open');
+}
+
 function renderImageOnCanvas(url) {
     var img = new Image();
     img.src = url;
@@ -63,12 +61,8 @@ function renderLinesOnImg(lines) {
 }
 
 function renderKeywords() {
-    var keywords = getKeywordsForDisplay().map(keyword => `<li onclick="onFilterGalleryByKeyword(this)" style="font-size:${keyword.count}em;">${keyword.keyword}</li>`)
+    var keywords = getKeywordsForDisplay().map(keyword => `<li><span onclick="onFilterGalleryByKeyword(this)" style="font-size:${keyword.count}em;">${keyword.keyword}</span></li>`)
     document.querySelector('.keywords-container').innerHTML = keywords.join('')
-}
-
-function onCloseEditor() {
-    document.querySelector('.meme-editor').classList.remove('open');
 }
 
 function onAddLine() {
@@ -109,12 +103,104 @@ function onShowMemeText(val, ev) {
 
 function drawRect(x, y) {
     gCtx.beginPath();
-
     gCtx.strokeStyle = 'black';
     gCtx.fillStyle = '#00000025'
     gCtx.rect(x, y, gElCanvas.width - 40, gFontSize + 10);
     gCtx.fillRect(x, y, gElCanvas.width - 40, gFontSize + 10);
     gCtx.stroke();
+}
+
+function onAlignText(alignment) {
+    gAlign = alignment;
+    const val = document.querySelector('.meme-text').value;
+    onShowMemeText(val)
+}
+
+function onMoveLine(dir) {
+    const val = document.querySelector('.meme-text').value
+    if (dir === 'up') {
+        moveLineUp()
+        gMarkedLinePos.y -= 10
+    } else {
+        moveLineDown();
+        gMarkedLinePos.y += 10
+    }
+    _renderCanvas()
+    console.log('yes');
+    onShowMemeText(val)
+}
+
+function onRemoveLine() {
+    removeLine();
+    _renderCanvas();
+}
+
+function onChangeFontSize(sign) {
+    (sign === '+') ? gFontSize++ : gFontSize--;
+    const val = document.querySelector('.meme-text').value;
+    if (gIsThereASquare) onShowMemeText(val)
+    else {
+        changeFontSize(gFontSize)
+        _renderCanvas()
+    }
+}
+
+function onChangeTextShow(el) {
+    const val = document.querySelector('.meme-text').value;
+    if (gIsThereASquare) onShowMemeText(val);
+    else {
+        (el.id === 'fill-color-btn') ? changeFillColor(el.value) : changeStrokeColor(el.value)
+        _renderCanvas()
+    }
+}
+
+function onSwitchLines() {
+    switchLines()
+    gFontSize = getLineFontSize()
+    // _renderCanvas()
+}
+
+function onSaveMeme() {
+    _renderCanvas()
+    uploadImg(gElCanvas);
+}
+
+function filterGalleryBySearch(val, ev) {
+    if (ev.key === 'Backspace') {
+        renderGallery();
+        return;
+    }
+    var filterBy = val + ev.key;
+    setKeyFilter(filterBy)
+    renderGallery()
+    setImgsToGallery();
+}
+
+function onMoveKeywordsForward() {
+    moveKeywordsForward()
+    renderKeywords()
+}
+
+function onMoveKeywordsBack() {
+    moveKeywordsBack()
+    renderKeywords()
+}
+
+function onFilterGallery(val) {
+    setKeyFilter(val)
+    renderGallery()
+    setImgsToGallery();
+    renderKeywords()
+}
+
+function onFilterGalleryByKeyword(el) {
+    const currKeyWord = el.innerText;
+    setKeyFilter(currKeyWord);
+    renderGallery();
+    setImgsToGallery();
+    increaseKeywordCount(currKeyWord)
+    renderKeywords()
+
 }
 
 function onSubmitLine() {
@@ -133,6 +219,19 @@ function onSubmitLine() {
     creatNewLine(line)
     _renderCanvas()
     gIsThereASquare = false;
+}
+
+function renderShareButton(encodedUrl, url) {
+    document.querySelector('.share-container').innerHTML = `
+    <a class="share-link" href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&t=${encodedUrl}" title="Share on Facebook" target="_blank" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=${url}&t=${url}'); return false;">
+       Share   
+    </a>    
+    <a href="#" class="download-link" onclick="downloadImg(this)" download="my-meme.jpg">Download</a>`
+}
+
+function downloadImg(elLink) {
+    var imgContent = gElCanvas.toDataURL('image/jpeg')
+    elLink.href = imgContent;
 }
 
 function onMove(ev) {
@@ -163,48 +262,6 @@ function onUp() {
     gIsLineMarked = false;
 }
 
-function onAlignText(alignment) {
-    gAlign = alignment;
-    const val = document.querySelector('.meme-text').value;
-    onShowMemeText(val)
-}
-
-function onMoveLine(dir) {
-    (dir === 'up') ? moveLineUp() : moveLineDown();
-    _renderCanvas()
-}
-
-function onRemoveLine() {
-    removeLine();
-    _renderCanvas();
-}
-
-function onChangeFontSize(sign) {
-    (sign === '+') ? gFontSize++ : gFontSize--;
-    const val = document.querySelector('.meme-text').value;
-    if (gIsThereASquare) onShowMemeText(val)
-    else {
-        debugger
-        changeFontSize(gFontSize)
-        _renderCanvas()
-    }
-}
-
-function onChangeTextShow() {
-    const val = document.querySelector('.meme-text').value;
-    onShowMemeText(val)
-}
-
-function onSwitchLines() {
-    switchLines()
-    gFontSize = getLineFontSize()
-    // _renderCanvas()
-}
-
-function onSaveMeme() {
-    uploadImg(gElCanvas);
-}
-
 function _renderCanvas() {
     const imageUrl = getImageForEditor();
     const lines = getLinesToRender()
@@ -227,42 +284,4 @@ function _addTouchListeners() {
     gElCanvas.addEventListener('touchmove', onMove)
     gElCanvas.addEventListener('touchstart', onDown)
     gElCanvas.addEventListener('touchend', onUp)
-}
-
-function filterGalleryBySearch(val, ev) {
-    if (ev.key === 'Backspace') {
-        renderGallery();
-        return;
-    }
-    var filterBy = val + ev.key;
-    setKeyFilter(filterBy)
-    renderGallery()
-    setImgsToGallery();
-}
-
-function onMoveKeywordsForward() {
-    moveKeywordsForward()
-    renderKeywords()
-}
-
-function onMoveKeywordsBack() {
-    moveKeywordsBack()
-    renderKeywords()
-}
-
-function onFilterGalleryByKeyword(el) {
-    const currKeyWord = el.innerText;
-    setKeyFilter(currKeyWord);
-    renderGallery();
-    setImgsToGallery();
-    increaseKeywordCount(currKeyWord)
-    renderKeywords()
-
-}
-
-function renderShareButton(encodedUrl, url) {
-    document.querySelector('.share-container').innerHTML = `
-    <a class="btn" href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&t=${encodedUrl}" title="Share on Facebook" target="_blank" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=${url}&t=${url}'); return false;">
-       Share   
-    </a>`
 }
