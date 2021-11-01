@@ -29,7 +29,7 @@
                 <ul class="keywords-container clean-list"></ul>
                 <button onclick="onMoveKeywordsForward()"><img src="images/arrow-right.png"></button>
             </div>
-            <input type="text" class="search-bar" placeholder="Search" onkeydown="filterGalleryBySearch(value, event)">
+            <input type="text" class="search-bar" placeholder="Search" onkeyup="filterGalleryBySearch(value, event)">
         </section>
         <section class="images-container main-layout">
         </section>
@@ -44,12 +44,12 @@
 
             <section class="editor-toolbox">
                 <div class="text-container">
-                    <input type="text" class="meme-text" placeholder="Text Line"
-                        onkeypress="onShowMemeText(value, event)">
+                    <input type="text" class="meme-text" placeholder="Write something"
+                        onkeyup="onChangeLineText(value)">
                 </div>
                 <div class="text-lines-edit">
                     <button onclick="onMoveLine(value)" value="down"><img src="images/arrow-down.png" alt=""></button>
-                    <button onclick="onMoveLine(value)" value="up"><img src="images/arrow-up.png" alt=""></button>
+                    <button onclick="onMoveLine(value)" value="up"><img src="images/arrow-up.png"></button>
                     <button onclick="onSwitchLines()"><img src="images/ICONS/switch.png"></button>
                     <button onclick="onAddLine()"><img src="images/ICONS/add.png"></button>
                     <button onclick="onRemoveLine()"><img src="images/ICONS/trash.png"></button>
@@ -59,24 +59,24 @@
                             src="images/ICONS/increase font - icon.png"></button>
                     <button onclick="onChangeFontSize(value)" value="-"><img
                             src="images/ICONS/decrease font - icon.png"></button>
-                    <button onclick="onAlignText('end')"><img src="images/ICONS/align-to-left.png"></button>
-                    <button onclick="onAlignText('center')"><img src="images/ICONS/center-text-alignment.png"></button>
-                    <button onclick="onAlignText('start')"><img src="images/ICONS/align-to-right.png"></button>
+                    <button onclick="onChangeAlign('end')"><img src="images/ICONS/align-to-left.png"></button>
+                    <button onclick="onChangeAlign('center')"><img
+                            src="images/ICONS/center-text-alignment.png"></button>
+                    <button onclick="onChangeAlign('start')"><img src="images/ICONS/align-to-right.png"></button>
                 </div>
                 <div class="color-section">
                     <label for="line-color-btn" class="line-color"><img src="images/ICONS/text stroke.png"> <input
-                            type="color" value="#ffffff" id="line-color-btn" onchange="onChangeTextShow(this)"></label>
+                            type="color" value="#ffffff" id="line-color-btn"
+                            onchange="onChangeStrokeColor(value)"></label>
                     <label for="fill-color-btn" class="fill-color"><img src="images/ICONS/paint-board-and-brush.png">
                         <input type="color" value="#000000" id="fill-color-btn"
-                            onchange="onChangeTextShow(this)"></label>
+                            onchange="onChangeFillColor(value)"></label>
                 </div>
-
-                <select name="font-select" id="font-select">
+                <select name="font-select" id="font-select" onchange="onChangeFont(value)">
                     <option value="Impact">Impact</option>
                     <option value="Times New Roman">Times New Roman</option>
-                    <option value="Ariel">Ariel</option>
+                    <option value="Arial">Arial</option>
                 </select>
-                <button onclick="onSubmitLine()">Save Line</button>
                 <section class="loading-btns">
                     <button onclick="onSaveMeme()">Save Meme</button>
                     <div class="share-container"></div>

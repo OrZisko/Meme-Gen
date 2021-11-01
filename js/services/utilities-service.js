@@ -1,17 +1,21 @@
 'use strict'
 
-function getEvPos(ev) {
-    var pos = {
-        x: ev.offsetX,
-        y: ev.offsetY,
-    }
-    if (G_TOUCH_EV.includes(ev.type)) {
-        ev.preventDefault();
-        ev = ev.changedTouches[0];
-        pos = {
-            x: ev.pageX - ev.target.offsetLeft - ev.target.clientLeft,
-            y: ev.pageY - ev.target.offsetTop - ev.target.clientTop,
-        }
-    }
-    return pos
+function getCanvasHeight(img, canvasWidth) {
+    const height = (img.height * canvasWidth) / img.width
+    return height;
 }
+
+function getImgFromMeme(meme) {
+    const imgData = gGallery.find(img => meme.selectedImgId === img.id)
+    var img = new Image();
+    img.src = imgData.url
+    return img
+}
+
+function getAdjustedXY(pos, el) {
+    var { x, y, } = pos;
+    x *= el.width;
+    y *= el.height;
+    return { x, y, }
+}
+

@@ -1,71 +1,176 @@
 'use strict'
+
 const G_TOUCH_EV = ['touchstart', 'touchmove', 'touchend'];
-var gGallery;
 var gKeywords;
 var gKeywordsIdx
-var gMeme;
+var gGallery;
 var gMemes;
+var gMeme;
+
+var gFontSize;
+
 var gStartPos;
 
+
 function init() {
-    gKeywordsIdx = 0
-    gMemes = loadFromStorage('userMemeDB')
-    if (!gMemes) gMemes = [];
-    setImgsToGallery()
+    _setImgsToGallery()
+    gMemes = loadFromStorage('userMemesDB')
     gKeywords = _getKeywords()
+    gKeywordsIdx = 0
+    if (!gMemes) gMemes = [];
+    gFontSize = 20;
 }
 
-function getGalleryForDisplay() {
-    return gGallery;
+function setKeyFilter(keyFilter) {
+    var regex = new RegExp(keyFilter, 'i')
+    var filterdGallery = gGallery.filter(img => {
+        return regex.test(img.keywords.join(' '))
+    })
+    gGallery = filterdGallery
 }
 
-function getKeywordsForDisplay() {
-    gKeywords.sort((a, b) => { return b.count - a.count })
-    const only4Keys = gKeywords.slice(gKeywordsIdx, gKeywordsIdx + 4)
-    return only4Keys;
-}
-
-function makeMemeDeta(id) {
+function makeMemeData(id) {
     gMeme = {
+        id: (!gMemes) ? 0 : gMemes.length,
         selectedImgId: id,
-        selectedLineIdx: null,
-        lines: [],
+        selectedLineIdx: 0,
+        lines: [
+            {
+                text: 'Write something',
+                sizeRatio: 0.1,
+                font: 'Impact',
+                strokeColor: 'white',
+                fillColor: 'black',
+                align: 'center',
+                posRatio: { x: 0.5, y: 0.2 },
+            },
+            {
+                text: 'Write something',
+                sizeRatio: 0.1,
+                font: 'Impact',
+                strokeColor: 'white',
+                fillColor: 'black',
+                align: 'center',
+                posRatio: { x: 0.5, y: 0.85 },
+            },
+        ],
     }
 }
 
-function getImageForEditor() {
-    var img = gGallery.find(img => img.id === gMeme.selectedImgId);
-    return img.url;
+function moveKeywordsForward() {
+    if ((gKeywordsIdx + 4) >= gKeywords.length) return
+    else gKeywordsIdx += 4
 }
 
-function getLinesToRender() {
-    return gMeme.lines
+function moveKeywordsBack() {
+    if ((gKeywordsIdx - 4) < 0) gKeywordsIdx = 0
+    else gKeywordsIdx -= 4
 }
 
-function getNumOfLines() {
-    return gMeme.lines.length
+function increaseKeywordCount(keywordToIncrease) {
+    keywordToIncrease = keywordToIncrease.toLowerCase()
+    var currKeyword = gKeywords.find(keyword => keyword.keyword === keywordToIncrease)
+    if (currKeyword.count > 3) return;
+    currKeyword.count += 0.5
+    gKeywords.sort((a, b) => { return b.count - a.count })
+    var currKeywordNewIdx = gKeywords.findIndex(keyword => keyword.keyword === keywordToIncrease)
+    gKeywordsIdx = Math.floor(currKeywordNewIdx / 4);
 }
 
-function creatNewLine(line) {
-    gMeme.lines.push(line)
+function placeMemeInEditor(id) {
+    const meme = gMemes.find(meme => meme.id === id);
+    gMeme = meme;
+}
+
+function changeLineText(val) {
+    var line = getCurrLine();
+    line.text = val;
+}
+
+function drawRect() {
+    const line = getCurrLine()
+    var { y } = getAdjustedXY(line.posRatio, gElCanvas)
+    const height = line.sizeRatio * gElCanvas.height;
+    gCtx.beginPath();
+    gCtx.strokeStyle = 'lightgray';
+    gCtx.fillStyle = '#00000025'
+    gCtx.rect(10, y - height, gElCanvas.width - 20, height + 10);
+    gCtx.fillRect(10, y - height, gElCanvas.width - 20, height + 10);
+    gCtx.stroke();
+}
+
+function moveLineUp() {
+    var line = getCurrLine();
+    if (line.posRatio.y - line.sizeRatio <= 0) return
+    line.posRatio.y -= 0.01;
+}
+
+function moveLineDown() {
+    var line = getCurrLine();
+    if (line.posRatio.y >= 1) return
+    line.posRatio.y += 0.01;
+}
+
+function switchLines() {
+    gMeme.selectedLineIdx++;
+    if (gMeme.selectedLineIdx === gMeme.lines.length) gMeme.selectedLineIdx = 0;
+}
+
+function addLine() {
+    const line = {
+        text: 'Write something',
+        sizeRatio: 0.1,
+        font: 'Impact',
+        strokeColor: 'black',
+        fillColor: 'black',
+        align: 'center',
+        posRatio: { x: 0.5, y: 0.55 },
+    }
+    gMeme.lines.push(line);
     gMeme.selectedLineIdx = gMeme.lines.length - 1;
 }
 
-function getXPos(align, width) {
-    switch (align) {
-        case 'start':
-            return 22;
-        case 'center':
-            return width / 2;
-        case 'end':
-            return width - 22;
-    }
+function removeLine() {
+    gMeme.lines.splice(gMeme.selectedLineIdx, 1)
 }
 
-function isLineClicked(clickPos, width) {
-    const lineIdx = gMeme.lines.findIndex(line =>
-        clickPos.y > line.pos.y - line.size &&
-        clickPos.y < line.pos.y)
+function changeFontSize(val) {
+    (val === '+') ? gFontSize += 3 : gFontSize -= 3
+    var line = getCurrLine();
+    line.sizeRatio = gFontSize / gElCanvas.height;
+}
+
+function changeAlign(val) {
+    var line = getCurrLine();
+    line.align = val;
+}
+
+function changeStrokeColor(val) {
+    var line = getCurrLine();
+    line.strokeColor = val;
+}
+
+function changeFillColor(val) {
+    var line = getCurrLine();
+    line.fillColor = val;
+}
+
+function changeFont(val) {
+    var line = getCurrLine();
+    line.font = val;
+}
+
+function saveMeme() {
+    gMemes.push(gMeme)
+    saveToStorage('userMemesDB', gMemes);
+}
+
+function isLineClicked(clickpPos) {
+    const lineIdx = gMeme.lines.findIndex(line => {
+        const { y } = getAdjustedXY(line.posRatio, gElCanvas)
+        return clickpPos.y >= (y - (line.sizeRatio * gElCanvas.height)) &&
+            clickpPos.y <= y
+    })
     if (lineIdx !== -1) {
         gMeme.selectedLineIdx = lineIdx;
         return true;
@@ -74,71 +179,73 @@ function isLineClicked(clickPos, width) {
     }
 }
 
-function setStartPos(pos) {
-    gStartPos = pos;
+function getKeywordsForDisplay() {
+    const only4Keys = gKeywords.slice(gKeywordsIdx, gKeywordsIdx + 4)
+    return only4Keys;
 }
 
-function moveLine(pos) {
-    const { x, y } = pos;
-    const dx = x - gStartPos.x;
-    const dy = y - gStartPos.y;
-    gMeme.lines[gMeme.selectedLineIdx].pos.x += dx;
-    gMeme.lines[gMeme.selectedLineIdx].pos.y += dy;
-    gStartPos = pos;
+function getGalleryForDisplay() {
+    return gGallery
 }
 
-function changeFontSize(size) {
-    gMeme.lines[gMeme.selectedLineIdx].size = size;
+function getImgForDisplay() {
+    const img = gGallery.find(img => img.id === gMeme.selectedImgId)
+    return img
 }
 
-function moveLineUp() {
-    if (!gMeme.selectedLineIdx) return
-    gMeme.lines[gMeme.selectedLineIdx].pos.y -= 10;
+function getLinesForDisplay() {
+    return gMeme.lines
 }
 
-function moveLineDown() {
-    if (!gMeme.selectedLineIdx) return
-    gMeme.lines[gMeme.selectedLineIdx].pos.y += 10;
+function getEvPos(ev) {
+    var pos = {
+        x: ev.offsetX,
+        y: ev.offsetY,
+    }
+    if (G_TOUCH_EV.includes(ev.type)) {
+        ev.preventDefault();
+        ev = ev.changedTouches[0];
+        pos = {
+            x: ev.pageX - ev.target.offsetLeft - ev.target.clientLeft,
+            y: ev.pageY - ev.target.offsetTop - ev.target.clientTop,
+        }
+    }
+    return pos
 }
 
-function removeLine() {
-    gMeme.lines.splice(gMeme.selectedLineIdx, 1)
-    gMeme.selectedLineIdx = 0;
-}
+function setMovementStart(el, clickpPos) {
+    gFontSize = getCurrLine().sizeRatio * el.height;
+    gStartPos = clickpPos;
 
-function switchLines() {
-    gMeme.selectedLineIdx++
-    if (gMeme.selectedLineIdx > gMeme.lines.length - 1) gMeme.selectedLineIdx = 0;
-}
-
-function addMemeToStorage(url) {
-    gMemes.push(url);
-    saveToStorage('userMemeDB', gMemes)
 }
 
 function getMemesToGallery() {
-    gMemes = loadFromStorage('userMemeDB');
+    gMemes = loadFromStorage('userMemesDB');
     return gMemes;
 }
 
-function getLineFontSize() {
-    return gMeme.lines[gMeme.selectedLineIdx].size;
+
+function moveLine(clickpPos) {
+    const disX = clickpPos.x - gStartPos.x;
+    const disY = clickpPos.y - gStartPos.y;
+    const disXRatio = (disX === 0) ? disX : disX / gElCanvas.width;
+    const disYRatio = (disY === 0) ? disY : disY / gElCanvas.height;
+    var line = getCurrLine();
+    line.posRatio.x += disXRatio;
+    line.posRatio.y += disYRatio;
+    gStartPos = clickpPos
 }
 
-function _getKeywords() {
-    var keywords = [];
-    gGallery.forEach(img => {
-        img.keywords.forEach(keyword => {
-            var currWord = keywords.find(obj => {
-                return (obj.keyword === keyword)
-            })
-            if (!currWord) keywords.push({ keyword, count: 1 })
-        })
-    })
-    return keywords
+function getCurrLineText() {
+    var line = getCurrLine();
+    return line.text;
 }
 
-function setImgsToGallery() {
+function getCurrLine() {
+    return gMeme.lines[gMeme.selectedLineIdx]
+}
+
+function _setImgsToGallery() {
     gGallery = [
         { id: 1, url: `images/meme-imgs/${1}.jpg`, keywords: ['trump', 'condesending', 'knowitall', 'president', 'finger'] },
         { id: 2, url: `images/meme-imgs/${2}.jpg`, keywords: ['dogs', 'cute', 'pair', 'animals'] },
@@ -168,35 +275,15 @@ function setImgsToGallery() {
     ]
 }
 
-function setKeyFilter(keyFilter) {
-    var regex = new RegExp(keyFilter)
-    var filterdGallery = gGallery.filter(img => {
-        return regex.test(img.keywords.join(' '))
+function _getKeywords() {
+    var keywords = [];
+    gGallery.forEach(imgData => {
+        imgData.keywords.forEach(keyword => {
+            var currWord = keywords.find(keywordData => {
+                return (keywordData.keyword === keyword)
+            })
+            if (!currWord) keywords.push({ keyword, count: 1 })
+        })
     })
-    gGallery = filterdGallery
-}
-
-function moveKeywordsForward() {
-    if ((gKeywordsIdx + 4) >= gKeywords.length) return
-    else gKeywordsIdx += 4
-}
-
-function moveKeywordsBack() {
-    if ((gKeywordsIdx - 4) < 0) gKeywordsIdx = 0
-    else gKeywordsIdx -= 4
-}
-
-function increaseKeywordCount(keywordToIncrease) {
-    var currKeyword = gKeywords.find(keyword => keyword.keyword === keywordToIncrease)
-    if (currKeyword.count > 3) return;
-    currKeyword.count += 0.5
-    gKeywordsIdx = 0;
-}
-
-function changeFillColor(val) {
-    gMeme.lines[gMeme.selectedLineIdx].fillColor = val;
-}
-
-function changeStrokeColor(val) {
-    gMeme.lines[gMeme.selectedLineIdx].strokeColor = val;
+    return keywords
 }

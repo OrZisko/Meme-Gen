@@ -1,11 +1,9 @@
-'use strict'
 
 function uploadImg(canvas) {
     const imgDataUrl = canvas.toDataURL('image/jpg');
-    addMemeToStorage(imgDataUrl)
     function onSuccess(uploadedImgUrl) {
         const encodedUploadedImgUrl = encodeURIComponent(uploadedImgUrl);
-        renderShareButton(encodedUploadedImgUrl, uploadedImgUrl);
+        renderShareButton(imgDataUrl, encodedUploadedImgUrl, uploadedImgUrl);
     }
     doUploadImg(imgDataUrl, onSuccess);
 }
