@@ -12,6 +12,13 @@ header {
     padding: 5px;
     margin-bottom: 20px;
 }
+button {
+    cursor: pointer;
+}
+
+.btn-container {
+    align-self: center;
+}
 
 .header-layout {
     display: flex;
@@ -28,9 +35,24 @@ header {
     width: 152px;
 }
 
+.keywords-container {
+    display: flex;
+    flex-grow: 2;
+    justify-content: center;
+    align-items: center;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    background-color: rgba(167, 167, 167, 0.808);
+    height: 5rem;
+}
+
 .keywords-container li {
     text-transform: capitalize;
     align-self: center;
+    margin: 0 5px;
+    color: orangered;
+    cursor:pointer;
 }
 
 .image-gallery {
@@ -139,27 +161,6 @@ label input {
 }
 
 
-.keywords-container li {
-    margin: 0 5px;
-    height: 5rem;
-    color: orangered;
-}
-
-
-
-.keywords-container {
-    display: flex;
-    flex-grow: 2;
-    justify-content: center;
-    align-items: center;
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    background-color: rgba(167, 167, 167, 0.808);
-
-
-}
-
 .editor-toolbox {
     display: flex;
     flex-direction: column;
@@ -198,6 +199,11 @@ label input {
 }
 
 
+@media (min-width: 860px) {
+    .burger-menu {
+        display: none;
+    }
+}
 @media (max-width: 860px) {
     body {
         font-size: 14px;
@@ -207,6 +213,29 @@ label input {
         min-width: 250px;
     }
 
+    .btn-container {
+        position: absolute;
+        top: 42px;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        background-color: orangered;
+        width: 120px;
+        display: none;
+    }
+    .btn-container.shown {
+        display: flex;
+    }
+
+    .burger-menu svg {
+        height: 1.5rem;
+    }
+
+    .btn-container button {
+        background: none;
+        border: none;
+        height: 30px;
+    }
     .my-canvas {
         width: 250px
     }
@@ -230,11 +259,10 @@ label input {
         flex-direction: column;
         justify-content: start;
         align-items: center;
-        
     }
 
     .keywords-section {
-        margin-left: 0;
+        display: none;
     }
 
     .images-container img {

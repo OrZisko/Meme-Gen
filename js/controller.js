@@ -4,10 +4,12 @@ var gElCanvas;
 var gCtx;
 
 var gIsLineMarked;
+var gIsMenuShown;
 
 function onInit() {
     init();
     gIsLineMarked = false;
+    gIsMenuShown = false;
     gElCanvas = document.querySelector('.my-canvas');
     gCtx = gElCanvas.getContext('2d');
     renderKeywords();
@@ -190,6 +192,12 @@ function onMove(ev) {
 
 function onUp() {
     gIsLineMarked = false;
+}
+
+function onShowMenu() {
+    gIsMenuShown = !gIsMenuShown;
+    var menu = document.querySelector('.btn-container')
+    gIsMenuShown ? menu.classList.add('shown') : menu.classList.remove('shown')
 }
 
 function _renderCanvas(withRect) {

@@ -1,6 +1,7 @@
 
 function uploadImg(canvas) {
     const imgDataUrl = canvas.toDataURL('image/jpg');
+    console.log(imgDataUrl);
     function onSuccess(uploadedImgUrl) {
         const encodedUploadedImgUrl = encodeURIComponent(uploadedImgUrl);
         renderShareButton(imgDataUrl, encodedUploadedImgUrl, uploadedImgUrl);
